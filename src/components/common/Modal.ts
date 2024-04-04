@@ -40,7 +40,7 @@ export class Modal extends Component<IModalData> {
 
     }
 
-    // Отображает модальное окно с переданным содержимым
+    // Подготовка разметки и открытие модального окна
     render(data: IModalData): HTMLElement {
     }
 }

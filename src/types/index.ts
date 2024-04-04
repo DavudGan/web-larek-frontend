@@ -43,7 +43,7 @@ export interface IAppState {
     setBasket(item: IBasketItem): void;
 
     //Очистка корзины
-    cleansBascet(): void;
+    clearBasket(): void;
     
     //Получение колличества товаров в корзине
     getBasketLength(): number;

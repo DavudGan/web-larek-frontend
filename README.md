@@ -42,6 +42,14 @@ yarn build
 ```
 ## Документация
 
+MVP
+
+>> Этот проект следует архитектурному шаблону MVP, где каждый класс соответствует одному из компонентов: Model, View или Presenter.
+
+>> Model (Модель) - класс, который работает с данными, проводит вычисления и руководит всеми бизнес-процессами.
+>> View (Вид или представление) - классы, показывающие пользователю интерфейс и данные из модели на экране.
+>> Presenter (Представитель) - класс, который обеспечивает связь, является посредником между моделью и видом.
+
 Типы данных
 
 ```
@@ -61,7 +69,7 @@ export interface ICard {
     title: string,
 
     // ценна товара
-    price:number,
+    price:number | null,
 
     // категория
     category:string,
@@ -94,7 +102,7 @@ export interface IAppState {
     setBasket(item: IBasketItem): void;
 
     //Очистка корзины
-    cleansBascet(): void;
+    clearBasket(): void;
     
     //Получение колличества товаров в корзине
     getBasketLength(): number;
@@ -119,7 +127,7 @@ export interface IOrderForm {
 //Ошибки валидации для формы заказа
 export type FormErrors = Partial<Record<keyof IOrderForm, string>>;
 ```
-Модел данных
+Модел данных Model (Model-MVP)
 
 ```
 
@@ -143,8 +151,47 @@ export abstract class Model<T> {
 
 }
 ```
+Модел данных AppState (Model-MVP) наследует Model (Model-MVP)
 
-Класс EventEmitter
+```
+
+export class AppState extends Model<IAppState> {
+    basket: [];
+    catalog: ICard[];
+    loading: boolean;
+    order: IOrderForm = {
+        address:'',
+        email: '',
+        phone: '',
+        price:''
+    };
+
+    formErrors: FormErrors = {};
+
+    setPreview(item: ICard) {
+    }
+    
+    setCatalog(items: ICard[]) {
+    }
+
+    setBasket(item: IBasketItem) {
+    }
+
+    clearBasket(){
+    }
+
+    getBasketLength(){
+    }
+
+    setOrderField(field: keyof IOrderForm, value: string) {
+    }
+
+    validateOrder() {
+    }
+}
+```
+
+Класс EventEmitter (Presenter-MVP)  представитель между Model и View
 
 ```
 
@@ -231,7 +278,7 @@ export class EventEmitter implements IEvents {
 }
 ```
 
-Класс API и ProductAPI 
+Класс API (Model-MVP) и ProductAPI (Model-MVP)
 
 ```
 
@@ -281,7 +328,7 @@ export class Api {
     }
 }
 
-// Данный класс дополняет основой Api
+// Данный класс наследует основой Api
 export class ProductAPI extends Api{
     readonly cdn: string;
 
@@ -342,7 +389,7 @@ export abstract class Component<T> {
 }
 ```
 
-Класс Bascet
+Класс Bascet (View-MVP)
 ```
 interface IBasketView {
     items: HTMLElement[];
@@ -378,7 +425,7 @@ export class Basket extends Component<IBasketView> {
     }
 }
 ```
-Класс Form
+Класс Form (View-MVP)
 
 ```
 interface IFormState {
@@ -426,7 +473,7 @@ export class Form<T> extends Component<IFormState> {
 }
 ```
 
-Класс Modal
+Класс Modal (View-MVP)
 
 ```
 
@@ -467,12 +514,12 @@ export class Modal extends Component<IModalData> {
 
     }
 
-    // Отображает модальное окно с переданным содержимым
+    // Подготовка разметки и открытие модального окна
     render(data: IModalData): HTMLElement {
     }
 }
 ```
-Класс Success
+Класс Success (View-MVP)
 
 ```
 
@@ -500,7 +547,7 @@ export class Success extends Component<ISuccess> {
     }
 }
 ```
-Класс Page
+Класс Page (View-MVP)
 
 ```
 
@@ -549,4 +596,37 @@ export class Page extends Component<IPage> {
     set locked(value: boolean) {
     }
 }
+```
+
+Описание событий
+
+```
+/* Обрабатывает изменение списка товаров и обновляет отображение каталога товаров на странице, 
+а также обновляет отображение числа элементов в корзине.
+*/
+'items:changed'
+
+// Открыть модальное окно карточки
+'card:select'
+
+// Обновление модального окна в случае изменения выбранной карточки
+'preview:changed'
+
+// Блокировка прокрутки страницы если открыта модальное окно
+'modal:open'
+
+// Разблокировка прокрутки страницы если закрыта модальное окно
+'modal:close'
+
+// При клике на корзину в главном меню открывается модальное окно с товарами
+'basket:open'
+
+// При нажатии на кнопку "Оплатить" открывается модальное окно для оформления заказа
+'basket:submit'
+
+// Проверка ввода данных пользователя в форме заказа
+'orderFormErrors:change'
+
+// При успешном совершении заказа открывается модальное окно об успешной оплате
+'order:success'
 ```

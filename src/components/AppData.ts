@@ -1,9 +1,9 @@
 import {Model} from "./base/Model";
-import {FormErrors, IAppState, ICasrd, IOrderForm, IBasketItem} from "../types";
+import {FormErrors, IAppState, ICard, IOrderForm, IBasketItem} from "../types";
 
 export class AppState extends Model<IAppState> {
     basket: [];
-    catalog: ICasrd[];
+    catalog: ICard[];
     loading: boolean;
     order: IOrderForm = {
         address:'',
@@ -14,16 +14,16 @@ export class AppState extends Model<IAppState> {
 
     formErrors: FormErrors = {};
 
-    setPreview(item: ICasrd) {
+    setPreview(item: ICard) {
     }
     
-    setCatalog(items: ICasrd[]) {
+    setCatalog(items: ICard[]) {
     }
 
     setBasket(item: IBasketItem) {
     }
 
-    cleansBascet(){
+    clearBasket(){
     }
 
     getBasketLength(){
