@@ -1,26 +1,31 @@
 import { Api, ApiListResponse } from './base/api';
-import {ICasrd} from "../types";
-
+import { ICard, IOrderResult } from '../types';
+import { IOrder } from './Order';
 
 export interface IProductAPI {
-    getProduct: () => Promise<ICasrd[]>;
+	getProduct: () => Promise<ICard[]>;
+	orderLots: (order: IOrder) => Promise<IOrderResult>;
 }
 
-export class PeoductAPI extends Api implements IProductAPI {
-    readonly cdn: string;
+export class ProductAPI extends Api implements IProductAPI {
+	readonly cdn: string;
 
-    constructor(cdn: string, baseUrl: string, options?: RequestInit) {
-        super(baseUrl, options);
-        this.cdn = cdn;
-    }
+	constructor(cdn: string, baseUrl: string, options?: RequestInit) {
+		super(baseUrl, options);
+		this.cdn = cdn;
+	}
+	orderLots: (order: IOrder) => Promise<IOrderResult>;
 
-    getProduct(): Promise<ICasrd[]> {
-        return this.get('/product').then((data: ApiListResponse<ICasrd>) =>
-            data.items.map((item) => ({
-                ...item,
-                image: this.cdn + item.image
-            }))
-        );
-    }
+	getProduct(): Promise<ICard[]> {
+		return this.get('/product').then((data: ApiListResponse<ICard>) =>
+			data.items.map((item) => ({
+				...item,
+				image: this.cdn + item.image,
+			}))
+		);
+	}
 
+	orderProduct(order: IOrder): Promise<IOrderResult> {
+		return this.post('/order', order).then((data: IOrderResult) => data);
+	}
 }

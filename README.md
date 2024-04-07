@@ -156,38 +156,64 @@ export abstract class Model<T> {
 ```
 
 export class AppState extends Model<IAppState> {
-    basket: [];
-    catalog: ICard[];
-    loading: boolean;
-    order: IOrderForm = {
-        address:'',
-        email: '',
-        phone: '',
-        price:''
-    };
+	basket: CardItem[] = [];
+	catalog: CardItem[];
+	loading: boolean;
+	order: IOrder = {
+		address: '',
+		payment: '',
+		email: '',
+		phone: '',
+		items: [],
+		total: null,
+	};
+	preview: string | null;
+	formErrors: FormErrors = {};
 
-    formErrors: FormErrors = {};
+	setItems() {
+	}
 
-    setPreview(item: ICard) {
-    }
-    
-    setCatalog(items: ICard[]) {
-    }
+	setPreview(item: ICard) {
+	}
 
-    setBasket(item: IBasketItem) {
-    }
+	setCatalog(items: ICard[]) {
+	}
 
-    clearBasket(){
-    }
+	setBasket(value: CardItem) {
+	}
 
-    getBasketLength(){
-    }
+	getClosedLots(): CardItem[] {
+	}
 
-    setOrderField(field: keyof IOrderForm, value: string) {
-    }
+	placeBid() {
+	}
 
-    validateOrder() {
-    }
+	getSummPriceBascet() {
+	}
+
+	deleteItemInBasket(id: string) {
+	}
+
+	getIndex(id: string) {
+	}
+
+	clearBasket() {
+	}
+
+	getBasketLength() {
+	}
+
+	setOrderField(field: keyof IOrderForm, value: string) {
+	}
+
+	setContactsField(field: keyof IOrderForm, value: string) {
+	}
+
+	validateOrder() {
+	}
+
+	validateOrderContacts() {
+	}
 }
 ```
 
@@ -346,6 +372,11 @@ export class ProductAPI extends Api{
             }))
         );
     }
+
+    //Отправка на сервер заказа
+    orderProduct(order: IOrder): Promise<IOrderResult> {
+		return this.post('/order', order).then((data: IOrderResult) => data);
+	}
 }
 ```
 
@@ -536,15 +567,22 @@ export class Success extends Component<ISuccess> {
     // Элемент, предназначенный для закрытия состояния
     protected _close: HTMLElement;
 
+    //Отображение суммы заказа
+	protected _price: HTMLElement;
+
     constructor(container: HTMLElement, actions: ISuccessActions) {
         super(container);
 
         this._close = ;
+        this._price = ;
 
         if (actions?.onClick) {
             this._close.addEventListener('click', actions.onClick);
         }
     }
+
+    //Установка суммы заказа
+    setPrice(value: number){}
 }
 ```
 Класс Page (View-MVP)
@@ -621,12 +659,26 @@ export class Page extends Component<IPage> {
 // При клике на корзину в главном меню открывается модальное окно с товарами
 'basket:open'
 
-// При нажатии на кнопку "Оплатить" открывается модальное окно для оформления заказа
-'basket:submit'
+// При нажатии на кнопку "Оформить" открывается модальное окно для оформления заказа - адресс, способ оплаты
+'order:open'
 
-// Проверка ввода данных пользователя в форме заказа
-'orderFormErrors:change'
+// При нажатии на кнопку "Далее" открывается модальное окно для оформления заказа - телефон, email
+'orderContacts:open'
 
+// Изменилось одно из полей order
+/^order\..*:change/
+
+// Изменилось одно из полей contacts
+/^contacts\..*:change/,
+
+// Изменилось состояние валидации формы ввода адресса и выбора оплаты
+'formErrors:change'
+
+// Изменилось состояние валидации контактов
+'contactsFormErrors:change'
+
+
+// Отправлена форма заказа
 // При успешном совершении заказа открывается модальное окно об успешной оплате
-'order:success'
+'order:submit'
 ```

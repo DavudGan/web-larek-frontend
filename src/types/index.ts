@@ -1,69 +1,75 @@
 //Описание карточки товара
 export interface ICard {
-    // ID товара
-    id:string,
+	// ID товара
+	id: string;
 
-    // описание
-    descripption:string | string[],
-    
-    // ссылка на картинку
-    image: string,
+	// описание
+	description: string | string[];
 
-    // название
-    title: string,
+	// ссылка на картинку
+	image: string;
 
-    // ценна товара
-    price:number,
+	// название
+	title: string;
 
-    // категория
-    category:string,
+	// ценна товара
+	price: number;
+
+	// категория
+	category: string;
 }
 
-
 //Основные сведения для отображения и управления корзиной
-export type IBasketItem = Pick<ICard, 'id'|'title'|'price'>
+export type IBasketItem = Pick<ICard, 'id' | 'title' | 'price'>;
 
 /*
     Данный интерфейф задает первоначалные состояние приложения.
 */
 export interface IAppState {
-    // Массив товаров
-    catalog: ICard[];
+	// Массив товаров
+	catalog: ICard[];
 
-    // Массив товаров в корзине
-    basket: string[];
+	// Массив товаров в корзине
+	basket: string[];
 
-    // информация о заказе
-    order: IOrderForm | null;
+	// информация о заказе
+	order: IOrderForm | null;
 
-    //Добавление товаров в массив
-    setCatalog(items: ICard[]): void;
+	//Добавление товаров в массив
+	setCatalog(items: ICard[]): void;
 
-    //Добавление товара в корзину
-    setBasket(item: IBasketItem): void;
+	//Добавление товара в корзину
+	setBasket(item: IBasketItem): void;
 
-    //Очистка корзины
-    clearBasket(): void;
-    
-    //Получение колличества товаров в корзине
-    getBasketLength(): number;
+	//Очистка корзины
+	clearBasket(): void;
 
-    // Заполнение полей в order
-    setOrderField(field: keyof IOrderForm, value: string): void;
+	//Получение колличества товаров в корзине
+	getBasketLength(): number;
 
-    //волидация
-    validateOrder(): boolean;
+	// Заполнение полей в order
+	setOrderField(field: keyof IOrderForm, value: string): void;
+
+	//волидация
+	validateOrder(): boolean;
 }
-
 
 //Интерфейс для формы заказа товара
 export interface IOrderForm {
-    email: string;
-    phone: string;
-    address: string;
-    price:string;
+	email: string;
+	phone: string;
+	address: string;
+	payment: string;
 }
 
+export interface IOrder extends IOrderForm {
+	items: string[];
+	total: number;
+}
 
 //Ошибки валидации для формы заказа
 export type FormErrors = Partial<Record<keyof IOrderForm, string>>;
+
+export interface IOrderResult {
+	id: string;
+}
