@@ -208,16 +208,16 @@ events.on('order:submit', () => {
 			const success = new Success(cloneTemplate(successTemplate), {
 				onClick: () => {
 					modal.close();
-					appData.clearBasket();
-					events.emit('auction:changed');
 				},
                 
 			});
-success.setPrice(appData.getSummPriceBascet())
+			success.setPrice(appData.getSummPriceBascet())
 			modal.render({
 				content: success.render({
                 }),
 			});
+			appData.clearBasket()
+			events.emit('auction:changed');
 		})
 		.catch((err) => {
 			console.error(err);

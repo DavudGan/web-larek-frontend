@@ -43,8 +43,8 @@ export class AppState extends Model<IAppState> {
 		this.emitChanges('preview:changed', item);
 	}
 
-	setCatalog(items: ICard[]) {
-		this.catalog = items.map((item) => new CardItem(item, this.events));
+	setCatalog(items: CardItem[]) {
+		this.catalog = items;
 		this.emitChanges('items:changed', { catalog: this.catalog });
 	}
 
